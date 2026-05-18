@@ -30,8 +30,29 @@ export const Login: React.FC = () => {
   const onSubmit = async (data: LoginInput) => {
     try {
       setGlobalError(null)
-      const response = await apiClient.post<{ token: string; user: { id: string; name: string; email: string; role: string } }>('/auth/login', data)
-      login(response.data.token, response.data.user)
+      interface LoginResponse {
+        success: boolean
+        message: string
+        data: {
+          accessToken: string
+          user: {
+            id?: string
+            _id?: string
+            name: string
+            email: string
+            role: string
+          }
+        }
+      }
+      const response = await apiClient.post<LoginResponse>('/auth/login', data)
+      const loginRes = response.data
+      const rawUser = loginRes.data.user
+      login(loginRes.data.accessToken, {
+        id: rawUser.id || rawUser._id || '',
+        name: rawUser.name,
+        email: rawUser.email,
+        role: rawUser.role,
+      })
       navigate('/')
     } catch (error) {
       if (error instanceof ApiError) {

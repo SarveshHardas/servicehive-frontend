@@ -13,7 +13,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [state, setState] = useState<AuthState>(() => {
     const token = localStorage.getItem(API_CONFIG.TOKEN_KEY)
     const userJson = localStorage.getItem('auth_user')
-    const user = userJson ? JSON.parse(userJson) : null
+    let user = null
+    if (userJson && userJson !== 'undefined') {
+      try {
+        user = JSON.parse(userJson)
+      } catch {
+        localStorage.removeItem('auth_user')
+      }
+    }
     return {
       user,
       token,
