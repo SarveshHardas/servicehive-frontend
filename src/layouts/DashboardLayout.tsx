@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
 import { Outlet, Link, useLocation } from 'react-router-dom'
 import { Menu, X, LayoutDashboard, Users, Settings, LogOut } from 'lucide-react'
+import { useAuth } from '../hooks/use-auth'
 
 export const DashboardLayout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const location = useLocation()
+  const { logout } = useAuth()
 
   const menuItems = [
     { label: 'Overview', path: '/', icon: LayoutDashboard },
@@ -13,7 +15,7 @@ export const DashboardLayout: React.FC = () => {
   ]
 
   const handleLogout = () => {
-    localStorage.removeItem('auth_token')
+    logout()
     window.location.href = '/login'
   }
 

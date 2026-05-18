@@ -1,14 +1,15 @@
 import React from 'react'
 import { Navigate } from 'react-router-dom'
+import { useAuth } from '../hooks/use-auth'
 
 interface PublicRouteProps {
   children: React.ReactNode
 }
 
 export const PublicRoute: React.FC<PublicRouteProps> = ({ children }) => {
-  const token = localStorage.getItem('auth_token')
+  const { isAuthenticated } = useAuth()
 
-  if (token) {
+  if (isAuthenticated) {
     return <Navigate to="/" replace />
   }
 

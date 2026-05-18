@@ -1,8 +1,16 @@
 import React from 'react'
+import { useAuth } from '../../hooks/use-auth'
 
 export const Login: React.FC = () => {
+  const { login } = useAuth()
+
   const handleMockLogin = () => {
-    localStorage.setItem('auth_token', 'mock-token')
+    login('mock-token', {
+      id: 'mock-id',
+      name: 'Guest Intern',
+      email: 'guest@example.com',
+      role: 'admin',
+    })
     window.location.href = '/'
   }
 
