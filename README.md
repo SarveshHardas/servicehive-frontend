@@ -125,7 +125,7 @@ VITE_API_URL=http://localhost:5000/api/v1
 
 *A walkthrough showing user authentication, creating/editing leads, filters, CSV exporting, and dark/light theme switching.*
 
-[► Play Demonstration Video]([Demo Video Link Placeholder])
+[► Play Demonstration Video (Google Drive)](https://drive.google.com/drive/folders/1XqiF04SCvQOFAMRYE935xHVs2ApFhFqR?usp=sharing)
 
 ---
 
