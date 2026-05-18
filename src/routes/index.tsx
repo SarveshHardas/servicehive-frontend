@@ -3,7 +3,6 @@ import DashboardLayout from '../layouts/DashboardLayout'
 import AuthLayout from '../layouts/AuthLayout'
 import Overview from '../pages/dashboard/Overview'
 import Leads from '../pages/dashboard/Leads'
-import Settings from '../pages/dashboard/Settings'
 import Login from '../pages/auth/Login'
 import Register from '../pages/auth/Register'
 import ProtectedRoute from './ProtectedRoute'
@@ -25,10 +24,6 @@ export const router = createBrowserRouter([
       {
         path: 'leads',
         element: <Leads />,
-      },
-      {
-        path: 'settings',
-        element: <Settings />,
       },
     ],
   },

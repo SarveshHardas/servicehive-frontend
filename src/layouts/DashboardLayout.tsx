@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Outlet, Link, useLocation } from 'react-router-dom'
-import { Menu, X, LayoutDashboard, Users, Settings, LogOut } from 'lucide-react'
+import { Menu, X, LayoutDashboard, Users, LogOut } from 'lucide-react'
 import { useAuth } from '../hooks/use-auth'
 import ThemeToggle from '../components/theme/ThemeToggle'
 
@@ -13,7 +13,6 @@ export const DashboardLayout: React.FC = () => {
   const menuItems = [
     { label: 'Overview', path: '/', icon: LayoutDashboard },
     { label: 'Leads', path: '/leads', icon: Users },
-    { label: 'Settings', path: '/settings', icon: Settings },
   ]
 
   const handleLogout = () => {

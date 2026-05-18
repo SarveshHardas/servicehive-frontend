@@ -103,10 +103,12 @@ export const Leads: React.FC = () => {
   }, [page, search, status, source, sort])
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchLeads()
   }, [fetchLeads])
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSearchInput(search)
   }, [search])
 
@@ -202,7 +204,7 @@ export const Leads: React.FC = () => {
             <button
               onClick={handleExportCSV}
               disabled={exporting || loading}
-              className="inline-flex items-center gap-2 rounded-md border border-neutral-200 bg-white px-3.5 py-2 text-sm font-semibold text-neutral-700 shadow-sm hover:bg-neutral-55 focus:outline-none disabled:opacity-50 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800"
+              className="inline-flex items-center gap-2 rounded-md border border-neutral-200 bg-white px-3.5 py-2 text-sm font-semibold text-neutral-700 shadow-sm hover:bg-neutral-50 focus:outline-none disabled:opacity-50 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800"
             >
               {exporting ? (
                 <span className="h-4 w-4 animate-spin rounded-full border-2 border-neutral-400 border-t-transparent dark:border-neutral-500" />
@@ -281,7 +283,7 @@ export const Leads: React.FC = () => {
               setSearchInput('')
               setSearchParams(new URLSearchParams())
             }}
-            className="w-full rounded-md border border-neutral-200 bg-white px-4 py-2 text-sm font-semibold text-neutral-600 shadow-sm hover:bg-neutral-55 focus:outline-none dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-850"
+            className="w-full rounded-md border border-neutral-200 bg-white px-4 py-2 text-sm font-semibold text-neutral-600 shadow-sm hover:bg-neutral-50 focus:outline-none dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800"
           >
             Clear Filters
           </button>
@@ -292,7 +294,7 @@ export const Leads: React.FC = () => {
         <div className="overflow-x-auto">
           {error ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="rounded-full bg-red-50 p-3 text-red-600 dark:bg-red-955/20 dark:text-red-400">
+              <div className="rounded-full bg-red-50 p-3 text-red-600 dark:bg-red-950/20 dark:text-red-400">
                 <AlertTriangle className="h-6 w-6" />
               </div>
               <h3 className="mt-4 text-sm font-semibold text-neutral-900 dark:text-neutral-50">
@@ -308,7 +310,7 @@ export const Leads: React.FC = () => {
             </div>
           ) : !loading && leads.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="rounded-full bg-neutral-100 p-3 text-neutral-600 dark:bg-neutral-850 dark:text-neutral-400">
+              <div className="rounded-full bg-neutral-100 p-3 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400">
                 <Inbox className="h-6 w-6" />
               </div>
               <h3 className="mt-4 text-sm font-semibold text-neutral-900 dark:text-neutral-50">
@@ -428,7 +430,7 @@ export const Leads: React.FC = () => {
               <button
                 onClick={handlePrevPage}
                 disabled={page === 1 || loading}
-                className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-neutral-200 bg-white text-neutral-600 shadow-xs transition-colors duration-150 hover:bg-neutral-55 disabled:cursor-not-allowed disabled:opacity-50 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-neutral-200 bg-white text-neutral-600 shadow-xs transition-colors duration-150 hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800"
               >
                 <ChevronLeft className="h-4 w-4" />
               </button>
@@ -438,7 +440,7 @@ export const Leads: React.FC = () => {
               <button
                 onClick={handleNextPage}
                 disabled={page === totalPages || loading}
-                className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-neutral-200 bg-white text-neutral-600 shadow-xs transition-colors duration-150 hover:bg-neutral-55 disabled:cursor-not-allowed disabled:opacity-50 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-neutral-200 bg-white text-neutral-600 shadow-xs transition-colors duration-150 hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800"
               >
                 <ChevronRight className="h-4 w-4" />
               </button>

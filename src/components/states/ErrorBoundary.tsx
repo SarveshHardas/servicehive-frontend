@@ -14,7 +14,8 @@ export class ErrorBoundary extends Component<Props, State> {
     hasError: false,
   }
 
-  public static getDerivedStateFromError(_: Error): State {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public static getDerivedStateFromError(_error: Error): State {
     return { hasError: true }
   }
 
@@ -22,7 +23,7 @@ export class ErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       return (
         <div className="flex min-h-screen flex-col items-center justify-center p-6 text-center bg-neutral-50 dark:bg-neutral-950">
-          <div className="rounded-full bg-red-50 p-4 text-red-600 dark:bg-red-955/20 dark:text-red-400">
+          <div className="rounded-full bg-red-50 p-4 text-red-600 dark:bg-red-950/20 dark:text-red-400">
             <AlertTriangle className="h-10 w-10" />
           </div>
           <h2 className="mt-6 text-lg font-bold tracking-tight text-neutral-900 dark:text-neutral-50">

@@ -26,12 +26,12 @@ const OverviewSkeleton: React.FC = () => {
     <div className="space-y-8 animate-pulse">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="h-28 rounded-lg border border-neutral-200 bg-white p-6 dark:border-neutral-850 dark:bg-neutral-900" />
+          <div key={i} className="h-28 rounded-lg border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900" />
         ))}
       </div>
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2 h-80 rounded-lg border border-neutral-200 bg-white p-6 dark:border-neutral-850 dark:bg-neutral-900" />
-        <div className="h-80 rounded-lg border border-neutral-200 bg-white p-6 dark:border-neutral-850 dark:bg-neutral-900" />
+        <div className="lg:col-span-2 h-80 rounded-lg border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900" />
+        <div className="h-80 rounded-lg border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900" />
       </div>
     </div>
   )
@@ -70,6 +70,7 @@ export const Overview: React.FC = () => {
   }
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchStats()
   }, [])
 
@@ -109,7 +110,7 @@ export const Overview: React.FC = () => {
     .slice(0, 5)
 
   const cards = [
-    { label: 'Total Leads', value: totalLeads, icon: Users, color: 'text-neutral-600 dark:text-neutral-400 bg-neutral-50 dark:bg-neutral-850' },
+    { label: 'Total Leads', value: totalLeads, icon: Users, color: 'text-neutral-600 dark:text-neutral-400 bg-neutral-50 dark:bg-neutral-800' },
     { label: 'Qualified Leads', value: qualifiedLeads, icon: UserCheck, color: 'text-emerald-600 bg-emerald-50/50 dark:bg-emerald-950/20 dark:text-emerald-400' },
     { label: 'Contacted Leads', value: contactedLeads, icon: PhoneCall, color: 'text-blue-600 bg-blue-50/50 dark:bg-blue-950/20 dark:text-blue-400' },
     { label: 'Lost Leads', value: lostLeads, icon: AlertCircle, color: 'text-red-600 bg-red-50/50 dark:bg-red-950/20 dark:text-red-400' },
@@ -127,7 +128,7 @@ export const Overview: React.FC = () => {
       </div>
 
       {error && (
-        <div className="rounded-md bg-red-50 p-4 text-sm font-medium text-red-600 dark:bg-red-955/20 dark:text-red-400 flex items-center justify-between">
+        <div className="rounded-md bg-red-50 p-4 text-sm font-medium text-red-600 dark:bg-red-950/20 dark:text-red-400 flex items-center justify-between">
           <span>{error}</span>
           <button onClick={fetchStats} className="text-xs underline hover:no-underline">Try Again</button>
         </div>

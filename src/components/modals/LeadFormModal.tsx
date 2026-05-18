@@ -58,6 +58,7 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({
         source: 'Website',
       })
     }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setGlobalError(null)
   }, [lead, reset, isOpen])
 

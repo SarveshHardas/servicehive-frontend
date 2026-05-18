@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useState } from 'react'
 import type { AuthUser, AuthState } from '../types/auth'
 import { API_CONFIG } from '../constants/api'
