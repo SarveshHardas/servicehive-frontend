@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import type { Lead } from '@/types/lead'
 import apiClient from '@/api/client'
 import { ApiError } from '@/utils/api-error'
-import { ChevronLeft, ChevronRight, AlertTriangle, Inbox, Edit2, Trash2, Plus } from 'lucide-react'
+import { ChevronLeft, ChevronRight, AlertTriangle, Inbox, Edit2, Trash2, Plus, Download, Search } from 'lucide-react'
 import LeadFormModal from '@/components/modals/LeadFormModal'
 import DeleteLeadModal from '@/components/modals/DeleteLeadModal'
+import { useAuth } from '@/hooks/use-auth'
 
 const getStatusStyles = (status: Lead['status']) => {
   switch (status) {
@@ -37,12 +39,23 @@ const TableSkeleton: React.FC = () => {
 }
 
 export const Leads: React.FC = () => {
+  const { user } = useAuth()
+  const isAdmin = user?.role === 'admin'
+
+  const [searchParams, setSearchParams] = useSearchParams()
+  const search = searchParams.get('search') || ''
+  const status = searchParams.get('status') || ''
+  const source = searchParams.get('source') || ''
+  const sort = searchParams.get('sort') || 'latest'
+  const page = parseInt(searchParams.get('page') || '1', 10)
+
+  const [searchInput, setSearchInput] = useState(search)
   const [leads, setLeads] = useState<Lead[]>([])
-  const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [totalLeads, setTotalLeads] = useState(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [exporting, setExporting] = useState(false)
 
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
@@ -62,7 +75,16 @@ export const Leads: React.FC = () => {
           totalPages: number
         }
       }
-      const response = await apiClient.get<BackendLeadsResponse>(`/leads?page=${page}&limit=10`)
+      const queryParams = new URLSearchParams({
+        page: page.toString(),
+        limit: '10',
+      })
+      if (search) queryParams.set('search', search)
+      if (status) queryParams.set('status', status)
+      if (source) queryParams.set('source', source)
+      if (sort) queryParams.set('sort', sort)
+
+      const response = await apiClient.get<BackendLeadsResponse>(`/leads?${queryParams.toString()}`)
       const resData = response.data
       setLeads(resData.data || [])
       setTotalPages(resData.pagination.totalPages || 1)
@@ -76,23 +98,92 @@ export const Leads: React.FC = () => {
     } finally {
       setLoading(false)
     }
-  }, [page])
+  }, [page, search, status, source, sort])
 
   useEffect(() => {
     fetchLeads()
   }, [fetchLeads])
 
+  useEffect(() => {
+    setSearchInput(search)
+  }, [search])
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      const currentSearch = searchParams.get('search') || ''
+      if (searchInput !== currentSearch) {
+        const params = new URLSearchParams(searchParams)
+        if (searchInput) {
+          params.set('search', searchInput)
+        } else {
+          params.delete('search')
+        }
+        params.set('page', '1')
+        setSearchParams(params)
+      }
+    }, 300)
+
+    return () => clearTimeout(delayDebounceFn)
+  }, [searchInput, searchParams, setSearchParams])
+
+  const updateFilter = (key: string, value: string) => {
+    const params = new URLSearchParams(searchParams)
+    if (value) {
+      params.set(key, value)
+    } else {
+      params.delete(key)
+    }
+    params.set('page', '1')
+    setSearchParams(params)
+  }
+
   const handlePrevPage = () => {
-    if (page > 1) setPage((prev) => prev - 1)
+    if (page > 1) {
+      const params = new URLSearchParams(searchParams)
+      params.set('page', (page - 1).toString())
+      setSearchParams(params)
+    }
   }
 
   const handleNextPage = () => {
-    if (page < totalPages) setPage((prev) => prev + 1)
+    if (page < totalPages) {
+      const params = new URLSearchParams(searchParams)
+      params.set('page', (page + 1).toString())
+      setSearchParams(params)
+    }
+  }
+
+  const handleExportCSV = async () => {
+    try {
+      setExporting(true)
+      const queryParams = new URLSearchParams()
+      if (search) queryParams.set('search', search)
+      if (status) queryParams.set('status', status)
+      if (source) queryParams.set('source', source)
+      if (sort) queryParams.set('sort', sort)
+
+      const response = await apiClient.get(`/leads/export?${queryParams.toString()}`, {
+        responseType: 'blob',
+      })
+      const blob = new Blob([response.data], { type: 'text/csv' })
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute('download', `leads-export-${Date.now()}.csv`)
+      document.body.appendChild(link)
+      link.click()
+      link.parentNode?.removeChild(link)
+      window.URL.revokeObjectURL(url)
+    } catch {
+      setError('Failed to export CSV. Please try again.')
+    } finally {
+      setExporting(false)
+    }
   }
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="space-y-1">
           <h2 className="text-xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
             Leads
@@ -101,23 +192,102 @@ export const Leads: React.FC = () => {
             Manage, qualify, and track your incoming smart leads.
           </p>
         </div>
-        <button
-          onClick={() => {
-            setSelectedLead(null)
-            setIsFormOpen(true)
-          }}
-          className="inline-flex items-center gap-2 rounded-md bg-neutral-900 px-3.5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-neutral-800 focus:outline-none dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-100"
-        >
-          <Plus className="h-4 w-4" />
-          Add Lead
-        </button>
+        <div className="flex items-center gap-3">
+          {isAdmin && (
+            <button
+              onClick={handleExportCSV}
+              disabled={exporting || loading}
+              className="inline-flex items-center gap-2 rounded-md border border-neutral-200 bg-white px-3.5 py-2 text-sm font-semibold text-neutral-700 shadow-sm hover:bg-neutral-55 focus:outline-none disabled:opacity-50 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800"
+            >
+              {exporting ? (
+                <span className="h-4 w-4 animate-spin rounded-full border-2 border-neutral-400 border-t-transparent dark:border-neutral-500" />
+              ) : (
+                <Download className="h-4 w-4 text-neutral-500" />
+              )}
+              Export CSV
+            </button>
+          )}
+          <button
+            onClick={() => {
+              setSelectedLead(null)
+              setIsFormOpen(true)
+            }}
+            className="inline-flex items-center gap-2 rounded-md bg-neutral-900 px-3.5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-neutral-800 focus:outline-none dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-100"
+          >
+            <Plus className="h-4 w-4" />
+            Add Lead
+          </button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-5">
+        <div className="relative">
+          <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+          <input
+            type="text"
+            placeholder="Search name or email..."
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            className="w-full rounded-md border border-neutral-200 bg-white py-2 pr-3 pl-9 text-sm text-neutral-900 placeholder:text-neutral-400 shadow-sm focus:border-neutral-900 focus:outline-none dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-50 dark:focus:border-neutral-50"
+          />
+        </div>
+
+        <div>
+          <select
+            value={status}
+            onChange={(e) => updateFilter('status', e.target.value)}
+            className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm text-neutral-900 shadow-sm focus:border-neutral-900 focus:outline-none dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-50 dark:focus:border-neutral-50"
+          >
+            <option value="">All Statuses</option>
+            <option value="New">New</option>
+            <option value="Contacted">Contacted</option>
+            <option value="Qualified">Qualified</option>
+            <option value="Lost">Lost</option>
+          </select>
+        </div>
+
+        <div>
+          <select
+            value={source}
+            onChange={(e) => updateFilter('source', e.target.value)}
+            className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm text-neutral-900 shadow-sm focus:border-neutral-900 focus:outline-none dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-50 dark:focus:border-neutral-50"
+          >
+            <option value="">All Sources</option>
+            <option value="Website">Website</option>
+            <option value="Instagram">Instagram</option>
+            <option value="Referral">Referral</option>
+          </select>
+        </div>
+
+        <div>
+          <select
+            value={sort}
+            onChange={(e) => updateFilter('sort', e.target.value)}
+            className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm text-neutral-900 shadow-sm focus:border-neutral-900 focus:outline-none dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-50 dark:focus:border-neutral-50"
+          >
+            <option value="latest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+          </select>
+        </div>
+
+        {(search || status || source || sort !== 'latest') && (
+          <button
+            onClick={() => {
+              setSearchInput('')
+              setSearchParams(new URLSearchParams())
+            }}
+            className="w-full rounded-md border border-neutral-200 bg-white px-4 py-2 text-sm font-semibold text-neutral-600 shadow-sm hover:bg-neutral-50 focus:outline-none dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-850"
+          >
+            Clear Filters
+          </button>
+        )}
       </div>
 
       <div className="overflow-hidden rounded-lg border border-neutral-200 bg-white shadow-xs dark:border-neutral-800 dark:bg-neutral-900">
         <div className="overflow-x-auto">
           {error ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="rounded-full bg-red-50 p-3 text-red-600 dark:bg-red-950/20 dark:text-red-400">
+              <div className="rounded-full bg-red-50 p-3 text-red-600 dark:bg-red-955/20 dark:text-red-400">
                 <AlertTriangle className="h-6 w-6" />
               </div>
               <h3 className="mt-4 text-sm font-semibold text-neutral-900 dark:text-neutral-50">
