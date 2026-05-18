@@ -14,6 +14,14 @@ The Smart Leads Dashboard Frontend serves as the user-facing application for sal
 
 ---
 
+## Demo Video
+
+*A walkthrough showing user authentication, creating/editing leads, filters, CSV exporting, and dark/light theme switching.*
+
+[► Play Demonstration Video (Google Drive)](https://drive.google.com/drive/folders/1XqiF04SCvQOFAMRYE935xHVs2ApFhFqR?usp=sharing)
+
+---
+
 ## Features
 
 1. **Authentication Flow**: Complete login and registration forms featuring responsive input components, real-time client-side schema validation (via React Hook Form + Zod), persistent tokens, and secure routing.
@@ -118,14 +126,6 @@ VITE_API_URL=http://localhost:5000/api/v1
 * **Backend Deployment Link**: `[Backend Deployment Link Placeholder]`
 * **Frontend Deployment Link**: `[Frontend Deployment Link Placeholder]`
 * **API Base URL**: `http://localhost:5000/api/v1` (local) or `[Production API URL Placeholder]`
-
----
-
-## Demo Video
-
-*A walkthrough showing user authentication, creating/editing leads, filters, CSV exporting, and dark/light theme switching.*
-
-[► Play Demonstration Video (Google Drive)](https://drive.google.com/drive/folders/1XqiF04SCvQOFAMRYE935xHVs2ApFhFqR?usp=sharing)
 
 ---
 
