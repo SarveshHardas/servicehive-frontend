@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../../hooks/use-auth'
+import { useToast } from '../../hooks/use-toast'
 import { loginSchema } from '../../forms/auth'
 import type { LoginInput } from '../../forms/auth'
 import apiClient from '../../api/client'
@@ -13,6 +14,7 @@ import { ApiError } from '../../utils/api-error'
 export const Login: React.FC = () => {
   const { login } = useAuth()
   const navigate = useNavigate()
+  const { success, error: showToastError } = useToast()
   const [globalError, setGlobalError] = useState<string | null>(null)
 
   const {
@@ -53,13 +55,15 @@ export const Login: React.FC = () => {
         email: rawUser.email,
         role: rawUser.role,
       })
+      success('Logged in successfully')
       navigate('/')
-    } catch (error) {
-      if (error instanceof ApiError) {
-        setGlobalError(error.message)
-      } else {
-        setGlobalError('An unexpected network error occurred')
+    } catch (err) {
+      let errMsg = 'An unexpected network error occurred'
+      if (err instanceof ApiError) {
+        errMsg = err.message
       }
+      setGlobalError(errMsg)
+      showToastError(errMsg)
     }
   }
 

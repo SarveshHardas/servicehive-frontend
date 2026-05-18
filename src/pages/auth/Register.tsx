@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useNavigate, Link } from 'react-router-dom'
 import { registerSchema } from '../../forms/auth'
 import type { RegisterInput } from '../../forms/auth'
+import { useToast } from '../../hooks/use-toast'
 import apiClient from '../../api/client'
 import Input from '../../components/ui/Input'
 import Button from '../../components/ui/Button'
@@ -11,6 +12,7 @@ import { ApiError } from '../../utils/api-error'
 
 export const Register: React.FC = () => {
   const navigate = useNavigate()
+  const { success, error: showToastError } = useToast()
   const [globalError, setGlobalError] = useState<string | null>(null)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
 
@@ -33,16 +35,18 @@ export const Register: React.FC = () => {
       setGlobalError(null)
       setSuccessMessage(null)
       await apiClient.post('/auth/register', data)
+      success('Account created successfully')
       setSuccessMessage('Registration successful! Redirecting to login...')
       setTimeout(() => {
         navigate('/login')
       }, 1500)
-    } catch (error) {
-      if (error instanceof ApiError) {
-        setGlobalError(error.message)
-      } else {
-        setGlobalError('An unexpected network error occurred')
+    } catch (err) {
+      let errMsg = 'An unexpected network error occurred'
+      if (err instanceof ApiError) {
+        errMsg = err.message
       }
+      setGlobalError(errMsg)
+      showToastError(errMsg)
     }
   }
 

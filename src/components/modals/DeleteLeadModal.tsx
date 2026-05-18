@@ -4,6 +4,7 @@ import type { Lead } from '../../types/lead'
 import Button from '../ui/Button'
 import apiClient from '../../api/client'
 import { ApiError } from '../../utils/api-error'
+import { useToast } from '../../hooks/use-toast'
 
 interface DeleteLeadModalProps {
   isOpen: boolean
@@ -18,6 +19,7 @@ export const DeleteLeadModal: React.FC<DeleteLeadModalProps> = ({
   onSuccess,
   lead,
 }) => {
+  const { success, error: showToastError } = useToast()
   const [loading, setLoading] = useState(false)
   const [globalError, setGlobalError] = useState<string | null>(null)
 
@@ -28,14 +30,16 @@ export const DeleteLeadModal: React.FC<DeleteLeadModalProps> = ({
       setLoading(true)
       setGlobalError(null)
       await apiClient.delete(`/leads/${lead.id || lead._id}`)
+      success('Lead deleted successfully')
       onSuccess()
       onClose()
     } catch (err) {
+      let errMsg = 'Failed to delete lead. Please try again.'
       if (err instanceof ApiError) {
-        setGlobalError(err.message)
-      } else {
-        setGlobalError('Failed to delete lead. Please try again.')
+        errMsg = err.message
       }
+      setGlobalError(errMsg)
+      showToastError(errMsg)
     } finally {
       setLoading(false)
     }
@@ -53,7 +57,7 @@ export const DeleteLeadModal: React.FC<DeleteLeadModalProps> = ({
             onClick={onClose}
             className="rounded-md text-neutral-400 hover:text-neutral-500 focus:outline-none dark:hover:text-neutral-300"
           >
-            <X className="h-4 w-4" />
+            <X className="h-5 w-5" />
           </button>
         </div>
 
@@ -64,16 +68,13 @@ export const DeleteLeadModal: React.FC<DeleteLeadModalProps> = ({
             </div>
           )}
 
-          <div className="space-y-1">
-            <p className="text-sm text-neutral-900 dark:text-neutral-100">
-              Are you sure you want to delete lead <span className="font-semibold">{lead.name}</span>?
-            </p>
-            <p className="text-xs text-neutral-500">
-              This action is permanent and cannot be undone.
+          <div className="space-y-2">
+            <p className="text-sm text-neutral-500 dark:text-neutral-400">
+              Are you sure you want to delete lead <span className="font-semibold text-neutral-950 dark:text-neutral-50">{lead.name}</span>? This action is permanent.
             </p>
           </div>
 
-          <div className="flex items-center justify-end gap-3 pt-1">
+          <div className="flex items-center justify-end gap-3 pt-2">
             <button
               type="button"
               onClick={onClose}
@@ -86,7 +87,7 @@ export const DeleteLeadModal: React.FC<DeleteLeadModalProps> = ({
               <Button
                 onClick={handleDelete}
                 loading={loading}
-                className="bg-red-600 hover:bg-red-500 dark:bg-red-600 dark:hover:bg-red-500 dark:hover:text-white transition-all duration-300"
+                className="bg-red-600 hover:bg-red-500 dark:bg-red-600 dark:hover:bg-red-500 dark:hover:text-white transition-all duration-100"
               >
                 Delete
               </Button>

@@ -9,6 +9,7 @@ import Input from '../ui/Input'
 import Button from '../ui/Button'
 import apiClient from '../../api/client'
 import { ApiError } from '../../utils/api-error'
+import { useToast } from '../../hooks/use-toast'
 
 interface LeadFormModalProps {
   isOpen: boolean
@@ -23,6 +24,7 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({
   onSuccess,
   lead,
 }) => {
+  const { success, error: showToastError } = useToast()
   const [globalError, setGlobalError] = useState<string | null>(null)
 
   const {
@@ -66,17 +68,20 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({
       setGlobalError(null)
       if (lead) {
         await apiClient.patch(`/leads/${lead.id || lead._id}`, data)
+        success('Lead updated successfully')
       } else {
         await apiClient.post('/leads', data)
+        success('Lead created successfully')
       }
       onSuccess()
       onClose()
     } catch (err) {
+      let errMsg = 'Failed to save lead. Please try again.'
       if (err instanceof ApiError) {
-        setGlobalError(err.message)
-      } else {
-        setGlobalError('Failed to save lead. Please try again.')
+        errMsg = err.message
       }
+      setGlobalError(errMsg)
+      showToastError(errMsg)
     }
   }
 

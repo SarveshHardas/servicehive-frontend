@@ -7,6 +7,7 @@ import { ChevronLeft, ChevronRight, AlertTriangle, Inbox, Edit2, Trash2, Plus, D
 import LeadFormModal from '@/components/modals/LeadFormModal'
 import DeleteLeadModal from '@/components/modals/DeleteLeadModal'
 import { useAuth } from '@/hooks/use-auth'
+import { useToast } from '@/hooks/use-toast'
 
 const getStatusStyles = (status: Lead['status']) => {
   switch (status) {
@@ -41,6 +42,7 @@ const TableSkeleton: React.FC = () => {
 export const Leads: React.FC = () => {
   const { user } = useAuth()
   const isAdmin = user?.role === 'admin'
+  const { success, error: showToastError } = useToast()
 
   const [searchParams, setSearchParams] = useSearchParams()
   const search = searchParams.get('search') || ''
@@ -174,12 +176,15 @@ export const Leads: React.FC = () => {
       link.click()
       link.parentNode?.removeChild(link)
       window.URL.revokeObjectURL(url)
+      success('Leads exported successfully')
     } catch {
-      setError('Failed to export CSV. Please try again.')
+      showToastError('Failed to export CSV. Please try again.')
     } finally {
       setExporting(false)
     }
   }
+
+  const hasActiveFilters = search || status || source || sort !== 'latest'
 
   return (
     <div className="space-y-6">
@@ -270,13 +275,13 @@ export const Leads: React.FC = () => {
           </select>
         </div>
 
-        {(search || status || source || sort !== 'latest') && (
+        {hasActiveFilters && (
           <button
             onClick={() => {
               setSearchInput('')
               setSearchParams(new URLSearchParams())
             }}
-            className="w-full rounded-md border border-neutral-200 bg-white px-4 py-2 text-sm font-semibold text-neutral-600 shadow-sm hover:bg-neutral-50 focus:outline-none dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-850"
+            className="w-full rounded-md border border-neutral-200 bg-white px-4 py-2 text-sm font-semibold text-neutral-600 shadow-sm hover:bg-neutral-55 focus:outline-none dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-850"
           >
             Clear Filters
           </button>
@@ -307,11 +312,24 @@ export const Leads: React.FC = () => {
                 <Inbox className="h-6 w-6" />
               </div>
               <h3 className="mt-4 text-sm font-semibold text-neutral-900 dark:text-neutral-50">
-                No leads available
+                {hasActiveFilters ? 'No matching leads' : 'No leads available'}
               </h3>
-              <p className="mt-1 text-sm text-neutral-500">
-                Your smart leads inventory is currently empty.
+              <p className="mt-1 text-sm text-neutral-500 max-w-xs">
+                {hasActiveFilters
+                  ? 'Your active search filters did not match any leads. Try resetting or adjusting your criteria.'
+                  : 'Your smart leads inventory is currently empty. Get started by adding a new lead.'}
               </p>
+              {hasActiveFilters && (
+                <button
+                  onClick={() => {
+                    setSearchInput('')
+                    setSearchParams(new URLSearchParams())
+                  }}
+                  className="mt-4 rounded-md border border-neutral-200 bg-white px-3 py-2 text-xs font-semibold text-neutral-700 shadow-xs hover:bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800"
+                >
+                  Reset Active Filters
+                </button>
+              )}
             </div>
           ) : (
             <table className="w-full text-left border-collapse">
@@ -410,7 +428,7 @@ export const Leads: React.FC = () => {
               <button
                 onClick={handlePrevPage}
                 disabled={page === 1 || loading}
-                className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-neutral-200 bg-white text-neutral-600 shadow-xs transition-colors duration-150 hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-neutral-200 bg-white text-neutral-600 shadow-xs transition-colors duration-150 hover:bg-neutral-55 disabled:cursor-not-allowed disabled:opacity-50 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800"
               >
                 <ChevronLeft className="h-4 w-4" />
               </button>
@@ -420,7 +438,7 @@ export const Leads: React.FC = () => {
               <button
                 onClick={handleNextPage}
                 disabled={page === totalPages || loading}
-                className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-neutral-200 bg-white text-neutral-600 shadow-xs transition-colors duration-150 hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-neutral-200 bg-white text-neutral-600 shadow-xs transition-colors duration-150 hover:bg-neutral-55 disabled:cursor-not-allowed disabled:opacity-50 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800"
               >
                 <ChevronRight className="h-4 w-4" />
               </button>
