@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { Outlet, Link, useLocation } from 'react-router-dom'
 import { Menu, X, LayoutDashboard, Users, Settings, LogOut } from 'lucide-react'
 import { useAuth } from '../hooks/use-auth'
+import ThemeToggle from '../components/theme/ThemeToggle'
+
 
 export const DashboardLayout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -22,16 +24,14 @@ export const DashboardLayout: React.FC = () => {
   return (
     <div className="flex h-screen overflow-hidden bg-neutral-50 dark:bg-neutral-950">
       <div
-        className={`fixed inset-0 z-20 bg-neutral-900/40 lg:hidden ${
-          sidebarOpen ? 'block' : 'hidden'
-        }`}
+        className={`fixed inset-0 z-20 bg-neutral-900/40 lg:hidden ${sidebarOpen ? 'block' : 'hidden'
+          }`}
         onClick={() => setSidebarOpen(false)}
       />
 
       <aside
-        className={`fixed inset-y-0 left-0 z-30 flex w-64 flex-col border-r border-neutral-200 bg-white transition-transform duration-200 lg:static lg:translate-x-0 dark:border-neutral-800 dark:bg-neutral-900 ${
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
+        className={`fixed inset-y-0 left-0 z-30 flex w-64 flex-col border-r border-neutral-200 bg-white transition-transform duration-200 lg:static lg:translate-x-0 dark:border-neutral-800 dark:bg-neutral-900 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}
       >
         <div className="flex h-16 items-center justify-between px-6 border-b border-neutral-100 dark:border-neutral-800">
           <span className="text-base font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
@@ -54,11 +54,10 @@ export const DashboardLayout: React.FC = () => {
                 key={item.path}
                 to={item.path}
                 onClick={() => setSidebarOpen(false)}
-                className={`flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors duration-150 ${
-                  active
+                className={`flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors duration-150 ${active
                     ? 'bg-neutral-900 text-white dark:bg-neutral-50 dark:text-neutral-900'
                     : 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-white'
-                }`}
+                  }`}
               >
                 <Icon className="h-4.5 w-4.5 shrink-0" />
                 {item.label}
@@ -86,10 +85,11 @@ export const DashboardLayout: React.FC = () => {
           >
             <Menu className="h-5 w-5" />
           </button>
+          <span className="text-sm font-medium text-neutral-500 dark:text-neutral-400">
+            Dashboard Session
+          </span>
           <div className="flex items-center gap-4">
-            <span className="text-sm font-medium text-neutral-500 dark:text-neutral-400">
-              Dashboard Session
-            </span>
+           <ThemeToggle />
           </div>
         </header>
 

@@ -86,7 +86,7 @@ export const DeleteLeadModal: React.FC<DeleteLeadModalProps> = ({
               <Button
                 onClick={handleDelete}
                 loading={loading}
-                className="bg-red-600 hover:bg-red-500 text-white dark:bg-red-600 dark:hover:bg-red-500 dark:text-white"
+                className="bg-red-600 hover:bg-red-500 dark:bg-red-600 dark:hover:bg-red-500 dark:hover:text-white transition-all duration-300"
               >
                 Delete
               </Button>
