@@ -132,38 +132,50 @@ VITE_API_URL=http://localhost:5000/api/v1
 ## Application Screenshots
 
 ### Authentication Screenshots
-*Placeholders for the authentication interface showing Login and Registration forms.*
+Showcasing the login and registration interfaces.
 
-| Login Page (Dark Theme) | Register Page (Light Theme) |
+| Login Page | Register Page |
 |:---:|:---:|
-| ![Login Page Dark Theme](assets/screenshots/login-dark.png) | ![Register Page Light Theme](assets/screenshots/register-light.png) |
+| ![Login Page](src/assets/outputs/signin.png) | ![Register Page](src/assets/outputs/signup.png) |
 
 ### Dashboard Screenshots
-*Placeholders for the main statistics dashboard and list views.*
+An overview of the main statistics dashboard and list views.
 
-#### 1. Overview Dashboard (Light Theme)
-![Overview Dashboard](assets/screenshots/overview-light.png)
+#### 1. Overview Dashboard
+![Overview Dashboard](src/assets/outputs/overview.png)
 
-#### 2. Leads Management Board (Dark Theme)
-![Leads Management Board](assets/screenshots/leads-dark.png)
+#### 2. Leads Management Board
+![Leads Management Board](src/assets/outputs/leads1.png)
 
-#### 3. Lead Creation Modal (Dark Theme)
-![Lead Creation Modal](assets/screenshots/lead-modal.png)
+#### 3. Lead Actions & Modal View
+![Lead Actions & Modal View](src/assets/outputs/leads2.png)
 
 ---
 
 ## Postman API Testing
 
-*Screenshots showing key endpoint validation and request/response telemetry during MERN integration testing.*
+Screenshots demonstrating request/response telemetry during MERN integration testing.
 
 #### 1. Authentication - User Login
-![Postman Login](assets/postman/auth-login.png)
+![Postman Login](src/assets/postman/login.png)
 
-#### 2. Leads - Create New Lead
-![Postman Create Lead](assets/postman/create-lead.png)
+#### 2. Authentication - User Registration
+![Postman Register](src/assets/postman/register.png)
 
-#### 3. Leads - Filtered Search & Pagination
-![Postman Search Leads](assets/postman/search-leads.png)
+#### 3. Leads - Create New Lead
+![Postman Create Lead](src/assets/postman/create-lead.png)
+
+#### 4. Leads - Get Leads (Filtered Search & Pagination)
+![Postman Get Leads](src/assets/postman/get-leads.png)
+
+#### 5. Leads - Update Lead
+![Postman Update Lead](src/assets/postman/update-lead.png)
+
+#### 6. Leads - Delete Lead
+![Postman Delete Lead](src/assets/postman/delete-lead.png)
+
+#### 7. Leads - Export Leads CSV
+![Postman Export CSV](src/assets/postman/export-csv.png)
 
 ---
 
